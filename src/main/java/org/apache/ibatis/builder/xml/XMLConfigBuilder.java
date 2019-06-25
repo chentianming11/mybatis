@@ -15,12 +15,6 @@
  */
 package org.apache.ibatis.builder.xml;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -41,6 +35,11 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
 /**
  * @author Clinton Begin
@@ -123,8 +122,9 @@ public class XMLConfigBuilder extends BaseBuilder {
 //  <mapper resource="org/mybatis/example/BlogMapper.xml"/> 
 //  </mappers> 
 //  </configuration>
-    
+
     //根节点是configuration
+    // 解析配置，从configuration根节点开始解析
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }

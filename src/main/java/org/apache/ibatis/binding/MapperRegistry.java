@@ -63,7 +63,11 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
-  //看一下如何添加一个映射
+  /**
+   * 添加映射就是将Mapper类型和对应的MapperProxyFactory关联，放到一个Map容器中
+   * @param type
+   * @param <T>
+   */
   public <T> void addMapper(Class<T> type) {
     //mapper必须是接口！才会添加
     if (type.isInterface()) {
@@ -77,6 +81,7 @@ public class MapperRegistry {
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        // 处理Mapper接口上的注解
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         loadCompleted = true;
@@ -97,6 +102,7 @@ public class MapperRegistry {
   }
 
   /**
+   * 查找包下所有是superType的类
    * @since 3.2.2
    */
   public void addMappers(String packageName, Class<?> superType) {
