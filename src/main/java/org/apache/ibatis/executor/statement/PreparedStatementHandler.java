@@ -15,13 +15,6 @@
  */
 package org.apache.ibatis.executor.statement;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -29,6 +22,9 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+
+import java.sql.*;
+import java.util.List;
 
 /**
  * @author Clinton Begin
@@ -43,7 +39,6 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     super(executor, mappedStatement, parameter, rowBounds, resultHandler, boundSql);
   }
 
-  @Override
   public int update(Statement statement) throws SQLException {
     //调用PreparedStatement.execute和PreparedStatement.getUpdateCount
     PreparedStatement ps = (PreparedStatement) statement;
@@ -55,13 +50,11 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     return rows;
   }
 
-  @Override
   public void batch(Statement statement) throws SQLException {
     PreparedStatement ps = (PreparedStatement) statement;
     ps.addBatch();
   }
 
-  @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     PreparedStatement ps = (PreparedStatement) statement;
     ps.execute();
@@ -86,7 +79,6 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     }
   }
 
-  @Override
   public void parameterize(Statement statement) throws SQLException {
     //调用ParameterHandler.setParameters
     parameterHandler.setParameters((PreparedStatement) statement);

@@ -15,24 +15,12 @@
  */
 package org.apache.ibatis.executor;
 
-import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.logging.jdbc.ConnectionLogger;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.Configuration;
@@ -41,6 +29,14 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
 
 /**
  * @author Clinton Begin
@@ -79,7 +75,6 @@ public abstract class BaseExecutor implements Executor {
     this.wrapper = this;
   }
 
-  @Override
   public Transaction getTransaction() {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
@@ -87,7 +82,6 @@ public abstract class BaseExecutor implements Executor {
     return transaction;
   }
 
-  @Override
   public void close(boolean forceRollback) {
     try {
       try {
@@ -109,13 +103,11 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
-  @Override
   public boolean isClosed() {
     return closed;
   }
 
   //SqlSession.update/insert/delete会调用此方法
-  @Override
   public int update(MappedStatement ms, Object parameter) throws SQLException {
     ErrorContext.instance().resource(ms.getResource()).activity("executing an update").object(ms.getId());
     if (closed) {
@@ -126,7 +118,6 @@ public abstract class BaseExecutor implements Executor {
     return doUpdate(ms, parameter);
   }
 
-  @Override
   public List<BatchResult> flushStatements() throws SQLException {
     return flushStatements(false);
   }
@@ -140,7 +131,6 @@ public abstract class BaseExecutor implements Executor {
   }
 
   //SqlSession.selectList会调用此方法
-  @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     //得到绑定sql
     BoundSql boundSql = ms.getBoundSql(parameter);
@@ -151,7 +141,6 @@ public abstract class BaseExecutor implements Executor {
  }
 
   @SuppressWarnings("unchecked")
-  @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
     //如果已经关闭，报错
@@ -198,7 +187,6 @@ public abstract class BaseExecutor implements Executor {
   }
 
   //延迟加载，DefaultResultSetHandler.getNestedQueryMappingValue调用.属于嵌套查询，比较高级.
-  @Override
   public void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType) {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
@@ -214,7 +202,6 @@ public abstract class BaseExecutor implements Executor {
   }
 
   //创建缓存Key
-  @Override
   public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
@@ -254,12 +241,10 @@ public abstract class BaseExecutor implements Executor {
     return cacheKey;
   }    
 
-  @Override
   public boolean isCached(MappedStatement ms, CacheKey key) {
     return localCache.getObject(key) != null;
   }
 
-  @Override
   public void commit(boolean required) throws SQLException {
     if (closed) {
       throw new ExecutorException("Cannot commit, transaction is already closed");
@@ -271,7 +256,6 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
-  @Override
   public void rollback(boolean required) throws SQLException {
     if (!closed) {
       try {
@@ -285,7 +269,6 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
-  @Override
   public void clearLocalCache() {
     if (!closed) {
       localCache.clear();
@@ -361,7 +344,6 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
-  @Override
   public void setExecutorWrapper(Executor wrapper) {
     this.wrapper = wrapper;
   }
