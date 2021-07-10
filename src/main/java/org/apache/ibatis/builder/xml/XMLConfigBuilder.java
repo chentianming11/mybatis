@@ -122,7 +122,6 @@ public class XMLConfigBuilder extends BaseBuilder {
 //  <mapper resource="org/mybatis/example/BlogMapper.xml"/> 
 //  </mappers> 
 //  </configuration>
-
     //根节点是configuration
     // 解析配置，从configuration根节点开始解析
     parseConfiguration(parser.evalNode("/configuration"));
@@ -302,6 +301,7 @@ public class XMLConfigBuilder extends BaseBuilder {
 //</settings>
   private void settingsElement(XNode context) throws Exception {
     if (context != null) {
+      // //得到孩子，返回Properties，孩子的格式肯定都有name,value属性
       Properties props = context.getChildrenAsProperties();
       // Check that all settings are known to the configuration class
       //检查下是否在Configuration类里都有相应的setter方法（没有拼写错误）

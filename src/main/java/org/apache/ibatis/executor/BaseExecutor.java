@@ -147,7 +147,6 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
-
     //先清局部缓存，再查询.但仅查询堆栈为0，才清。为了处理递归调用
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       clearLocalCache();
